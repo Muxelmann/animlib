@@ -132,6 +132,9 @@ class Canvas():
         # center context axis
         self._context.translate(self._width/2, self._height/2)
 
+        # re-scale context so that drawn geometies are always the same
+        # herein, -144 is the top and 144 is the bottom
+        self._context.scale(self._height / 1440 * 5, self._height / 1440 * 5)
 
     def _openMoviePipe(self):
         """ Opens a movie pipe into which frame data can be written """

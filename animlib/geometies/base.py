@@ -27,7 +27,7 @@ class Base():
         self._fillColor = np.array((1.0, 1.0, 1.0, 1.0))
         self._strokeGradient = None
         self._strokeColor = np.array((1.0, 1.0, 1.0, 1.0))
-        self._strokeWidth = 1.0
+        self._strokeWidth = 0.10
         self._isHidden = False
 
         for key in kwargs:
