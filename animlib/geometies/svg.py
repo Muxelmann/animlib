@@ -51,8 +51,8 @@ class SVG(Base):
         if element.tagName in ["defs", "g", "svg"]:
             for c in element.childNodes:
                 self._extractBaseObjectsFrom(c)
-        # elif element.tagName == "style":
-        #     pass # TODO: handle style
+        elif element.tagName == "style":
+            print("implement stype")
         elif element.tagName == "path":
             self._newPathObj(element)
         elif element.tagName == "use":
@@ -134,7 +134,7 @@ class SVG(Base):
                 if prevCommand in ["C", "S"]: # otherwise treat as C
                     lP1 = self.getNthPoint(-1)
                     lP2 = self.getNthPoint(-2)
-                    newPoint = np.concatenate((lP2-lP1+lP2, newPoint), 0)
+                    newPoint = np.concatenate((2*lP1-lP2, newPoint), 0)
             elif command == "Q": # Q x1 y1, x y
                 newPoint = np.concatenate((newPoint[0, :].reshape((1, 2)), newPoint), 0)
             elif command == "T": # T x y
