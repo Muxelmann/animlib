@@ -22,6 +22,16 @@ class SVG(Base):
         if os.path.exists(self._svgFile):
             self._extractSvg()
 
+        # move to coordinate (0, 0) by default
+        self.translateBy(-self.getCenter())
+
+        for key in kwargs:
+            arg = kwargs[key]
+            if key in ["x", "X"]:
+                self.translateBy(convertToPoints((arg, 0)))
+            if key in ["y", "Y"]:
+                self.translateBy(convertToPoints((0, arg)))
+
     def _extractSvg(self):
         doc = minidom.parse(self._svgFile)
         self._pathsUsed = {}

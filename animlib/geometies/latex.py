@@ -6,12 +6,21 @@ from time import sleep
 
 class Latex(SVG):
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.__tmpdir = "_tmp"
         self._useCTex = False
         if not os.path.exists(self.__tmpdir):
             os.mkdir(self.__tmpdir)
         
+        assert len(args) == 0 or len(args) == 2 or len(args) == 3, "must pass [x, y] or [x, y, expr]"
+
+        if len(args) > 0:
+            kwargs["x"] = args[0]
+        if len(args) > 1:
+            kwargs["y"] = args[1]
+        if len(args) > 2 and not any([k in kwargs.keys() for k in ["expression", "Expression", "expr", "Expr"]]):
+                kwargs["expr"] = args[2]
+
         self._expression = None
         for key in kwargs:
             arg = kwargs[key]
@@ -32,6 +41,7 @@ class Latex(SVG):
             self.__tmpdir,
             self._texHash()
         ) + ".tex"
+        print("LaTeX conversion : {}".format(os.path.split(self._texFile)[-1]), end=" ")
         self._divFile = self._texFile.replace(".tex", ".dvi" if not self._useCTex else ".xdv")
         self._svgFile = self._divFile.replace(".dvi" if not self._useCTex else ".xdv", ".svg")
 
@@ -42,6 +52,7 @@ class Latex(SVG):
                 texOutFile.close()
             self._texToDvi()
             self._dviToSvg()
+        print("-> DONE")
 
     def _texHash(self):
         idStr = str(self._expression + getTexTemplate(self._useCTex))
