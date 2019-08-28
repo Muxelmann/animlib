@@ -13,6 +13,16 @@ class Center(Enum):
     BY_POINTS = 0
     BY_OUTLINE = 1
 
+class Direction(Enum):
+    BELOW = (0, 1)
+    ABOVE = (0, -1)
+    LEFT = (-1, 0)
+    RIGHT = (1, 0)
+    POSITION = (0, 0)
+
+    def getPoint(self):
+        return convertToPoints(self.value)
+
 class Base():
     """
     Defines the basic geometry using points, stroke and fill information
@@ -318,6 +328,27 @@ class Base():
                 endIdx = startIdx + np.size(self._paths[i], 0)
                 self._paths[i] += translation[startIdx:endIdx,:]
                 startIdx = endIdx
+
+    def setLocation(self, reference, direction=None, offset=1):
+        """ Moves the geometry to a location relative to a reference object """
+
+        if not isinstance(reference, Base):
+            return
+
+        if not isinstance(direction, Direction):
+            direction = Direction.TO
+        
+        delta = (-self.getCenter() + reference.getCenter()).reshape((-1, 2))
+        if direction in ["to", "To"]:
+            self.translateBy(delta)
+            return
+
+        dimSelf = self.getDimensions() / 2 + offset
+        dimTarget = reference.getDimensions() / 2 + offset
+
+        delta += (dimTarget[0, :] + dimSelf) * direction.getPoint()
+
+        self.translateBy(delta)
 
     def draw(self, context):
         """ Draws on the geometry on `context` (i.e. cairo) """        
