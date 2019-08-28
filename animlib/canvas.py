@@ -10,6 +10,10 @@ import numpy as np
 from time import sleep
 from tqdm import tqdm
 
+LOCATION_TOP = np.array((0, 0)).reshape((-1, 2))
+LOCATION_BOTTOM = np.array((0, 0)).reshape((-1, 2))
+LOCATION_LEFT = np.array((0, 0)).reshape((-1, 2))
+LOCATION_RIGHT = np.array((0, 0)).reshape((-1, 2))
 
 class Canvas():
     """ The `Canvas` enables drawing of multiple geometries (i.e. `Base`) """
@@ -27,6 +31,9 @@ class Canvas():
         self._movieFileExtension = movieFileExtension if movieFileExtension in [".mp4", ".mov"] else ".mp4"
         self._geometrySet = []
         self._backgroundColor = np.array((0.0, 0.0, 0.0, 1.0))
+
+        # number of units upwards and downwards
+        self._heightUnits = 288
 
         self._progressBarStyle = "{desc:<8}{percentage:3.0f}%|{bar}|{n_fmt:3s}/{total_fmt:3s}[{elapsed}<{remaining},{rate_fmt}{postfix}]"
 
@@ -125,6 +132,7 @@ class Canvas():
             self._writeFrame()
 
     def _initCairo(self):
+        global LOCATION_TOP, LOCATION_BOTTOM, LOCATION_LEFT, LOCATION_RIGHT
         self._surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, self._width, self._height)
         self._context = cairo.Context(self._surface)
         self._context.set_antialias(cairo.ANTIALIAS_DEFAULT)
@@ -133,8 +141,13 @@ class Canvas():
         self._context.translate(self._width/2, self._height/2)
 
         # re-scale context so that drawn geometies are always the same
-        # herein, -144 is the top and 144 is the bottom
-        self._context.scale(self._height / 1440 * 5, self._height / 1440 * 5)
+        # herein, -144 is the top and 144 is the bottom based on hightUnits
+        self._context.scale(self._height / self._heightUnits, self._height / self._heightUnits)
+
+        LOCATION_TOP[0,1] = -self._heightUnits/2
+        LOCATION_BOTTOM[0,1] = self._heightUnits/2
+        LOCATION_LEFT[0,0] = -self._heightUnits/2 * self._width/self._height
+        LOCATION_RIGHT[0,0] = self._heightUnits/2 * self._width/self._height
 
     def _openMoviePipe(self):
         """ Opens a movie pipe into which frame data can be written """
