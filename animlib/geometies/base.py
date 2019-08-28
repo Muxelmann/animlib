@@ -244,6 +244,11 @@ class Base():
             ), 0)
         raise Exception("cannot get outline for pathIdx: {}".format(pathIdx))
 
+    def getDimensions(self, pathIdx=None):
+        """ Returns the width and height of the geometry or path of geometry """
+        outline = self.getOutline(pathIdx)
+        return np.diff(outline, 1, 0)
+
     def getCenter(self, center=Center.BY_OUTLINE):
         """ Returns the center coordinate """
         if np.size(self.getPoints(), 0) == 0:
