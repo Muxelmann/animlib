@@ -12,14 +12,7 @@ class Latex(SVG):
         if not os.path.exists(self.__tmpdir):
             os.mkdir(self.__tmpdir)
         
-        assert len(args) == 0 or len(args) == 2 or len(args) == 3, "must pass [x, y] or [x, y, expr]"
-
-        if len(args) > 0:
-            kwargs["x"] = args[0]
-        if len(args) > 1:
-            kwargs["y"] = args[1]
-        if len(args) > 2 and not any([k in kwargs.keys() for k in ["expression", "Expression", "expr", "Expr"]]):
-                kwargs["expr"] = args[2]
+        assert len(args) == 0, "must pass named arguments"
 
         self._expression = None
         for key in kwargs:
