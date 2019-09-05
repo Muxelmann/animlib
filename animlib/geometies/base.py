@@ -329,14 +329,14 @@ class Base():
                 self._paths[i] += translation[startIdx:endIdx,:]
                 startIdx = endIdx
 
-    def setLocation(self, reference, direction=None, offset=1):
+    def setLocation(self, reference, direction=None, offset=0.25):
         """ Moves the geometry to a location relative to a reference object """
 
         if not isinstance(reference, Base):
             return
 
         if not isinstance(direction, Direction):
-            direction = Direction.TO
+            direction = Direction.POSITION
         
         delta = (-self.getCenter() + reference.getCenter()).reshape((-1, 2))
         if direction in ["to", "To"]:
